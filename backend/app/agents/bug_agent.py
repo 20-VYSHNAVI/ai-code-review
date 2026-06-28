@@ -1,9 +1,5 @@
 import ast
-import google.generativeai as genai
-from app.core.config import settings
-
-genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+import ollama
 
 def check_bugs_ast(code: str):
     issues = []
@@ -41,8 +37,11 @@ ISSUES: (list each issue on new line starting with -)
 SUGGESTIONS: (list each suggestion on new line starting with -)
 LEARNING_TIPS: (list each tip on new line starting with -)"""
 
-    response = model.generate_content(prompt)
-    content = response.text
+    response = ollama.chat(
+        model="llama3.2:1b",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    content = response["message"]["content"]
 
     bug_score = 70
     issues = ast_issues.copy()

@@ -1,9 +1,5 @@
 import ast
-import google.generativeai as genai
-from app.core.config import settings
-
-genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+import ollama
 
 def check_ast(code: str):
     issues = []
@@ -13,11 +9,6 @@ def check_ast(code: str):
             if isinstance(node, ast.FunctionDef):
                 if not ast.get_docstring(node):
                     issues.append(f"Function '{node.name}' is missing a docstring")
-            if isinstance(node, ast.For):
-                if isinstance(node.iter, ast.Call):
-                    if isinstance(node.iter.func, ast.Name):
-                        if node.iter.func.id == "range":
-                            pass
     except SyntaxError as e:
         issues.append(f"Syntax error: {str(e)}")
     return issues
@@ -38,8 +29,11 @@ ISSUES: (list each issue on new line starting with -)
 SUGGESTIONS: (list each suggestion on new line starting with -)
 LEARNING_TIPS: (list each tip on new line starting with -)"""
 
-    response = model.generate_content(prompt)
-    content = response.text
+    response = ollama.chat(
+        model="llama3.2:1b",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    content = response["message"]["content"]
 
     quality_score = 70
     readability_score = 70
