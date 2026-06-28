@@ -1,10 +1,8 @@
 "use client";
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -27,7 +25,7 @@ export default function LoginPage() {
         });
         localStorage.setItem("token", response.data.access_token);
         localStorage.setItem("username", username);
-        router.push("/");
+        window.location.href = "/";
       } else {
         if (!email) {
           setError("Please enter email");
@@ -103,22 +101,4 @@ export default function LoginPage() {
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 rounded p-3 font-bold disabled:opacity-50"
-          >
-            {loading ? "Please wait..." : isLogin ? "Login" : "Register"}
-          </button>
-
-          <p className="text-center text-gray-400 text-sm">
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-blue-400 hover:underline"
-            >
-              {isLogin ? "Register" : "Login"}
-            </button>
-          </p>
-        </div>
-      </div>
-    </main>
-  );
-}
+            className="w-full bg-blue-600 hover:bg-blue-700 rounded p-3 font-bold
