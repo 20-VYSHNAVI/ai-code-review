@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import axios from "axios";
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -17,31 +16,40 @@ export default function LoginPage() {
     }
     setLoading(true);
     setError("");
-    try {
-      if (isLogin) {
-        const response = await axios.post("http://127.0.0.1:8080/api/auth/login", {
-          username,
-          password,
-        });
-        localStorage.setItem("token", response.data.access_token);
+
+    if (isLogin) {
+      const response = await fetch("http://127.0.0.1:8080/api/auth/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({username, password})
+      });
+      const data = await response.json();
+      if (data.access_token) {
+        localStorage.setItem("token", data.access_token);
         localStorage.setItem("username", username);
-        window.location.href = "/";
+        alert("Login successful!");
+        window.location.assign("http://localhost:3000");
       } else {
-        if (!email) {
-          setError("Please enter email");
-          setLoading(false);
-          return;
-        }
-        await axios.post("http://127.0.0.1:8080/api/auth/register", {
-          username,
-          email,
-          password,
-        });
+        setError(data.detail || "Login failed");
+      }
+    } else {
+      if (!email) {
+        setError("Please enter email");
+        setLoading(false);
+        return;
+      }
+      const response = await fetch("http://127.0.0.1:8080/api/auth/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({username, email, password})
+      });
+      const data = await response.json();
+      if (data.message) {
         setIsLogin(true);
         setError("Registered successfully! Please login.");
+      } else {
+        setError(data.detail || "Registration failed");
       }
-    } catch (err: any) {
-      setError(err.response?.data?.detail || "Something went wrong");
     }
     setLoading(false);
   };
@@ -55,7 +63,6 @@ export default function LoginPage() {
         <p className="text-center text-gray-400 mb-8">
           {isLogin ? "Login to your account" : "Create new account"}
         </p>
-
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">Username</label>
@@ -67,7 +74,6 @@ export default function LoginPage() {
               className="w-full bg-gray-700 rounded p-3 text-sm"
             />
           </div>
-
           {!isLogin && (
             <div>
               <label className="block text-sm font-medium mb-2">Email</label>
@@ -80,7 +86,6 @@ export default function LoginPage() {
               />
             </div>
           )}
-
           <div>
             <label className="block text-sm font-medium mb-2">Password</label>
             <input
@@ -91,14 +96,29 @@ export default function LoginPage() {
               className="w-full bg-gray-700 rounded p-3 text-sm"
             />
           </div>
-
           {error && (
             <p className={`text-sm ${error.includes("successfully") ? "text-green-400" : "text-red-400"}`}>
               {error}
             </p>
           )}
-
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 rounded p-3 font-bold
+            className="w-full bg-blue-600 hover:bg-blue-700 rounded p-3 font-bold disabled:opacity-50"
+          >
+            {loading ? "Please wait..." : isLogin ? "Login" : "Register"}
+          </button>
+          <p className="text-center text-gray-400 text-sm">
+            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-blue-400 hover:underline"
+            >
+              {isLogin ? "Register" : "Login"}
+            </button>
+          </p>
+        </div>
+      </div>
+    </main>
+  );
+}
