@@ -75,6 +75,7 @@ export default function Home() {
             </button>
           </div>
         </div>
+
         <div className="bg-gray-800 rounded-lg p-6 mb-6">
           <label className="block text-sm font-medium mb-2">Python Code</label>
           <textarea
@@ -93,9 +94,20 @@ export default function Home() {
             {loading ? "Analyzing... Please wait" : "Analyze Code"}
           </button>
         </div>
+
         {result && (
           <div className="bg-gray-800 rounded-lg p-6">
-            <h2 className="text-2xl font-bold mb-4 text-green-400">Review Results</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-green-400">Review Results</h2>
+              <a
+                href={`http://127.0.0.1:8080/api/review/download-report/${result.review_id}?token=${token}`}
+                target="_blank"
+                className="bg-green-600 hover:bg-green-700 rounded p-2 px-4 text-sm font-bold"
+              >
+                Download PDF
+              </a>
+            </div>
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-gray-700 rounded p-4 text-center">
                 <p className="text-gray-400 text-sm">Quality</p>
@@ -114,6 +126,7 @@ export default function Home() {
                 <p className="text-3xl font-bold text-purple-400">{result.scores.overall}</p>
               </div>
             </div>
+
             <div className="mb-4">
               <span className={`px-3 py-1 rounded text-sm font-bold ${
                 result.severity === "Critical" ? "bg-red-600" :
@@ -122,6 +135,7 @@ export default function Home() {
                 Severity: {result.severity}
               </span>
             </div>
+
             <div className="mb-6">
               <h3 className="text-lg font-bold mb-2 text-red-400">Issues Found</h3>
               <ul className="space-y-2">
@@ -130,6 +144,7 @@ export default function Home() {
                 ))}
               </ul>
             </div>
+
             <div className="mb-6">
               <h3 className="text-lg font-bold mb-2 text-blue-400">Suggestions</h3>
               <ul className="space-y-2">
@@ -138,6 +153,7 @@ export default function Home() {
                 ))}
               </ul>
             </div>
+
             <div>
               <h3 className="text-lg font-bold mb-2 text-yellow-400">Learning Tips</h3>
               <ul className="space-y-2">

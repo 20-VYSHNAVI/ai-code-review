@@ -82,3 +82,37 @@ def submit_feedback(request: FeedbackRequest, db: Session = Depends(get_db)):
     review.feedback = request.feedback
     db.commit()
     return {"message": "Feedback submitted successfully"}
+from fastapi.responses import Response
+from app.services.pdf_generator import generate_pdf_report
+
+@router.get("/download-report/{review_id}")
+def download_report(review_id: int, token: str, db: Session = Depends(get_db)):
+    payload = verify_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    review = db.query(Review).filter(Review.id == review_id).first()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    
+    review_data = {
+        "filename": review.filename,
+        "scores": {
+            "quality": review.quality_score,
+            "security": review.security_score,
+            "readability": review.readability_score,
+            "overall": review.overall_score
+        },
+        "issues": eval(review.issues),
+        "suggestions": eval(review.suggestions),
+        "learning_tips": [],
+        "severity": review.severity
+    }
+    
+    pdf_bytes = generate_pdf_report(review_data, payload.get("sub", "user"))
+    
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=review_{review_id}.pdf"}
+    )
