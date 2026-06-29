@@ -4,6 +4,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    GEMINI_API_KEY: str
     DATABASE_URL: str
     CHROMA_DB_PATH: str = "./chroma_db"
 

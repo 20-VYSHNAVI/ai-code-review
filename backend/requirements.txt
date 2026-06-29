@@ -16,3 +16,4 @@ ollama
 reportlab
 waitress
 pydantic-settings
+google-genai

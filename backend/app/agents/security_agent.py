@@ -1,5 +1,8 @@
 import ast
-import ollama
+from google import genai
+from app.core.config import settings
+
+client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
 def check_security_ast(code: str):
     issues = []
@@ -35,11 +38,11 @@ ISSUES: (list each issue on new line starting with -)
 SUGGESTIONS: (list each suggestion on new line starting with -)
 LEARNING_TIPS: (list each tip on new line starting with -)"""
 
-    response = ollama.chat(
-        model="llama3.2:1b",
-        messages=[{"role": "user", "content": prompt}]
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=prompt
     )
-    content = response["message"]["content"]
+    content = response.text
 
     security_score = 70
     issues = ast_issues.copy()
