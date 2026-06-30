@@ -41,7 +41,7 @@ SUGGESTIONS: (list each suggestion on new line starting with -)
 LEARNING_TIPS: (list each tip on new line starting with -)"""
 
     response = client.models.generate_content(
-        model="gemini-1.5-flash",
+        model="gemini-2.0-flash",
         contents=prompt
     )
     content = response.text
