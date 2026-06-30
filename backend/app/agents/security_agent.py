@@ -1,8 +1,8 @@
 import ast
-from google import genai
+from groq import Groq
 from app.core.config import settings
 
-client = genai.Client(api_key=settings.GEMINI_API_KEY)
+client = Groq(api_key=settings.GROQ_API_KEY)
 
 def check_security_ast(code: str):
     issues = []
@@ -38,11 +38,11 @@ ISSUES: (list each issue on new line starting with -)
 SUGGESTIONS: (list each suggestion on new line starting with -)
 LEARNING_TIPS: (list each tip on new line starting with -)"""
 
-    response = client.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=prompt
+    response = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}]
     )
-    content = response.text
+    content = response.choices[0].message.content
 
     security_score = 70
     issues = ast_issues.copy()
