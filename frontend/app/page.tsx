@@ -30,7 +30,7 @@ export default function Home() {
     }
     setLoading(true);
     setError("");
-    const response = await fetch("http://127.0.0.1:8080/api/review/analyze", {
+    const response = await fetch("https://ai-code-review-backend-pbc6.onrender.com/api/review/analyze", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({code, filename: "code.py", token})
@@ -100,9 +100,10 @@ export default function Home() {
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-green-400">Review Results</h2>
               <a
-                href={`http://127.0.0.1:8080/api/review/download-report/${result.review_id}?token=${token}`}
+               
                 target="_blank"
-                className="bg-green-600 hover:bg-green-700 rounded p-2 px-4 text-sm font-bold"
+                className="bg-green-600 hover:bg-green-700 rounded p-2 px 
+                href={`https://ai-code-review-backend-pbc6.onrender.com/api/review/download-report/${result.review_id}?token=${token}`}-4 text-sm font-bold"
               >
                 Download PDF
               </a>

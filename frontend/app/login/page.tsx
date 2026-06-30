@@ -18,7 +18,7 @@ export default function LoginPage() {
     setError("");
 
     if (isLogin) {
-      const response = await fetch("http://127.0.0.1:8080/api/auth/login", {
+      const response = await fetch("https://ai-code-review-backend-pbc6.onrender.com/api/auth/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({username, password})
@@ -38,7 +38,7 @@ export default function LoginPage() {
         setLoading(false);
         return;
       }
-      const response = await fetch("http://127.0.0.1:8080/api/auth/register", {
+      const response = await fetch("https://ai-code-review-backend-pbc6.onrender.com/api/auth/register", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({username, email, password})
